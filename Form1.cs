@@ -38,6 +38,7 @@ namespace Ejercicio1_Guía3_PED
                 validado = false;
                 errorProvider1.SetError(numSalario, "Escriba un salario valido");
             }
+
             return validado;
         }
 
@@ -72,13 +73,19 @@ namespace Ejercicio1_Guía3_PED
         private void btnRegistrar_Click(object sender, EventArgs e)
         {
             BorrarMensaje();
+            DateTime pagoSalario = dateTimePicker1.Value;
+            int validacion = System.DateTime.Now.Year - pagoSalario.Year;
+
+            if (validacion >= 0) 
+            {
+                errorProvider1.SetError(dateTimePicker1, "Ingrese una fecha de salario valido");
+            }
 
             if(ValidarCampos())
             {
+                
 
 
-
-                MessageBox.Show("prueba" + mskedCarnet.Text + "|");
 
 
             }
