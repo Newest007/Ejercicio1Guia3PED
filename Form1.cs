@@ -42,13 +42,19 @@ namespace Ejercicio1_Guía3_PED
             return validado;
         }
 
+        public void Limpiar() //Método para limpiar los textbox
+        {
+            mskedCarnet.Clear();
+            txtNombre.Clear();
+            numSalario.Value = 0;
+        }
+
         private void BorrarMensaje()
         {
             errorProvider1.SetError(txtNombre,"");
             errorProvider1.SetError(numSalario, "");
             errorProvider1.SetError(mskedCarnet, "");
         }
-
 
         private void label2_Click(object sender, EventArgs e)
         {
@@ -70,24 +76,33 @@ namespace Ejercicio1_Guía3_PED
 
         }
 
+        Queue<Empleados> Trabajadores = new Queue<Empleados>();
+        //Objeto de la clase cola, es de tipo de la clase empleado, almacena objetos(?
+
         private void btnRegistrar_Click(object sender, EventArgs e)
         {
             BorrarMensaje();
             DateTime pagoSalario = dateTimePicker1.Value;
             int validacion = System.DateTime.Now.Year - pagoSalario.Year;
 
-            if (validacion >= 0) 
+            if (validacion <= 0) 
             {
-                errorProvider1.SetError(dateTimePicker1, "Ingrese una fecha de salario valido");
+                errorProvider1.SetError(dateTimePicker1, "Ingrese una fecha de empleado valido");
             }
 
-            if(ValidarCampos())
+            else if(ValidarCampos())
             {
-                
-
-
-
-
+                Empleados empleado = new Empleados(); //Instacia para la clase empleados
+                //Campturando los datos del empleado
+                empleado.Carnet = mskedCarnet.Text;
+                empleado.Nombre = txtNombre.Text;
+                empleado.Salario = numSalario.Value;
+                empleado.Fecha = dateTimePicker1.Value;
+                Trabajadores.Enqueue(empleado); //Enqueue se utiliza para encolar a los "integrantes" de la cola
+                dataGridView1.DataSource = null;
+                dataGridView1.DataSource = Trabajadores.ToArray();
+                Limpiar();
+                mskedCarnet.Focus();
             }
 
         }
@@ -118,6 +133,36 @@ namespace Ejercicio1_Guía3_PED
                 e.Handled = true;
                 errorProvider1.SetError(txtNombre, "No se aceptan NickNames");
             }
+
+
+        }
+
+        private void btnEliminar_Click(object sender, EventArgs e)
+        {
+
+            if(Trabajadores.Count != 0) //Lo hará siempre y cuando hayan trabajadores en la cola
+            {
+                Empleados empleado = new Empleados();
+                empleado = Trabajadores.Dequeue(); //En vez de estar creando un método aparte para eliminar al primero
+                                                   //de la fila simplemente usamos en comando Dequeue
+                mskedCarnet.Text = empleado.Carnet;
+                txtNombre.Text = empleado.Nombre;
+                numSalario.Value = empleado.Salario;
+                dateTimePicker1.Value = empleado.Fecha;
+                //Ahora la estructura que ha sido convertida en cola pasa al dtgv teniendo un trabajador menos
+                dataGridView1.DataSource = Trabajadores.ToList();
+                MessageBox.Show("Se ha retirado un registro de la cola", "AVISO");
+                Limpiar();
+
+            }
+
+            else
+            {
+                MessageBox.Show("No hay empleados en la cola", "AVISO");
+                Limpiar();
+            }
+
+            mskedCarnet.Focus();
 
 
         }
